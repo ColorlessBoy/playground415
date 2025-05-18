@@ -1,12 +1,28 @@
 import Mathlib
 open Nat
 
+lemma gcd_pos_iff {m n : Nat} : 0 < Nat.gcd m n ↔ 0 < m ∨ 0 < n := by
+  simp only [Nat.pos_iff_ne_zero, ne_eq, gcd_eq_zero_iff, Decidable.not_and_iff_or_not]
+
+lemma pow_left_inj' {a b n : Nat} (hn : n ≠ 0) : a ^ n = b ^ n ↔ a = b := by
+  refine ⟨fun h => ?_, (· ▸ rfl)⟩
+  match Nat.lt_trichotomy a b with
+  | Or.inl hab => exact False.elim (absurd h (Nat.ne_of_lt (Nat.pow_lt_pow_left hab hn)))
+  | Or.inr (Or.inl hab) => exact hab
+  | Or.inr (Or.inr hab) => exact False.elim (absurd h (Nat.ne_of_lt' (Nat.pow_lt_pow_left hab hn)))
+
+lemma pow_eq_one {a n : Nat} : a ^ n = 1 ↔ a = 1 ∨ n = 0 := by
+  obtain rfl | hn := Decidable.em (n = 0)
+  · simp
+  · simp [hn]
+    rw [← one_pow n, pow_left_inj' hn, one_pow]
+
 lemma lemma1 {x y : ℕ} (hx : 0 < x) (hy : 0 < y) :
   ∃ (d a b : ℕ), d > 0 ∧ a > 0 ∧ b > 0 ∧ x = d * a ∧ y = d * b ∧ Nat.Coprime a b := by
     let d := x.gcd y
     let a := x / d
     let b := y / d
-    have hd : d > 0 := Nat.gcd_pos_iff.mpr (Or.inl hx)
+    have hd : d > 0 := gcd_pos_iff.mpr (Or.inl hx)
     have hxd : x ≥ d := Nat.gcd_le_left _ hx
     have hyd : y ≥ d := Nat.gcd_le_right _ hy
     have ha : a > 0 := Nat.div_pos hxd (Nat.gcd_pos_of_pos_right x hy)
@@ -97,7 +113,7 @@ theorem number_theory_247811 (x y : ℕ) (hx : 0 < x) (hy : 0 < y)
     have h1 := dvd_trans (Nat.dvd_mul_left _ _) hp2
     have h2 := (Nat.dvd_prime hp).mp h1
     apply Or.elim h2
-    · intro h; have := Nat.pow_eq_one.mp h; omega
+    · intro h; have := pow_eq_one.mp h; omega
     apply lemma3 hb hp
   have ha2 := dvd_trans (Nat.dvd_mul_right _ _) hp2
   have ha3 := (Nat.dvd_prime hp).mp ha2
