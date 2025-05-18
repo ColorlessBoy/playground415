@@ -100,7 +100,7 @@ lemma lemma5 {p d : ℕ} (hp : Nat.Prime p) (h : p + 1 = d ^ 2) : d = 2 ∧ p = 
     · intro h; rw [← hd5] at h; exfalso; have := Nat.ne_of_lt hd_lt; exact this h.symm
 
 -- 确定所有自然数对 $x, y$，使 $\frac{x y^2}{x+y}$ 是素数。
-theorem number_theory_247811 (x y : ℕ) (hx : 0 < x) (hy : 0 < y)
+theorem number_theory_247811_mp (x y : ℕ) (hx : 0 < x) (hy : 0 < y)
   (hxy: ∃ p, Nat.Prime p ∧ p * (x + y) = (x * y^2))
   : (x, y) = (2, 2) ∨ (x, y) = (6, 2) := by
   obtain ⟨p, hp, hpxy⟩ := hxy
@@ -129,3 +129,14 @@ theorem number_theory_247811 (x y : ℕ) (hx : 0 < x) (hy : 0 < y)
   rw [ha4, hb2, one_pow, mul_one, Nat.mul_left_cancel_iff (Nat.Prime.one_le hp)] at hpxy
   have ⟨h1, h2⟩ := lemma5 hp hpxy
   rw [hda, hdb, h1, ha4, h2, hb2]
+
+theorem number_theory_247811_mpr (x y : ℕ) (_ : 0 < x) (_ : 0 < y)
+  (hxy: (x, y) = (2, 2) ∨ (x, y) = (6, 2))
+  : ∃ p, Nat.Prime p ∧ p * (x + y) = (x * y^2) := by
+  apply hxy.elim
+  · intro h; simp at h; use 2; apply And.intro (Nat.prime_two); rw [h.1, h.2]; simp
+  intro h; simp at h; use 3; apply And.intro (Nat.prime_three); rw [h.1, h.2]; simp
+
+theorem number_theory_247811 (x y : ℕ) (hx : 0 < x) (hy : 0 < y) :
+  (∃ p, Nat.Prime p ∧ p * (x + y) = (x * y^2)) ↔ (x, y) = (2, 2) ∨ (x, y) = (6, 2) := by
+  exact ⟨number_theory_247811_mp x y hx hy, number_theory_247811_mpr x y hx hy⟩
