@@ -1,0 +1,11 @@
+设 $n$ 是一个正整数。对于一个实数 $x \geq 1$，满足 $\left\lfloor x^{n+1}\right\rfloor$, $\left\lfloor x^{n+2}\right\rfloor, \ldots,\left\lfloor x^{4 n}\right\rfloor$ 都是正整数的平方。证明 $\lfloor x\rfloor$ 也为一个正整数的平方。这里 $⌊z⌋$ 表示小于或等于 $z$ 的最大整数。
+
+We first prove this for $n=1$. Write $x=a+r$, with $a \geq 1$ an integer and $0 \leq r&lt;1$. Suppose $\left\lfloor x^{2}\right\rfloor$, $\left\lfloor x^{3}\right\rfloor$ and $\left\lfloor x^{4}\right\rfloor$ are squares. It follows that $a \leq x&lt;a+1$, from which we conclude that $a^{2} \leq x^{2}&lt;(a+1)^{2}$. This pins $x^{2}$ between two consecutive squares. But $\left\lfloor x^{2}\right\rfloor$ is a square, so the only possibility is $\left\lfloor x^{2}\right\rfloor=a^{2}$. We conclude that $a^{2} \leq x^{2}&lt;a^{2}+1$. Similarly, it follows that $\left(a^{2}\right)^{2} \leq x^{4}&lt;\left(a^{2}+1\right)^{2}$ and thus $\left\lfloor x^{4}\right\rfloor=a^{4}$. We conclude that $a^{4} \leq x^{4}&lt;a^{4}+1$.
+
+Furthermore, $x^{3} \geq a^{3}$. Suppose now that $x^{3} \geq a^{3}+1$, then
+
+$$ x^{4} \geq x\left(a^{3}+1\right)=(a+r)\left(a^{3}+1\right)=a^{4}+r a^{3}+a+r \geq a^{4}+a \geq a^{4}+1 $$
+
+contradiction. Therefore, $x^{3}&lt;a^{3}+1$, from which it follows that $\left\lfloor x^{3}\right\rfloor=a^{3}$. This is also a square, so $a$ must itself be a square. We see that $\lfloor x\rfloor$ is a square.
+
+Now we prove the problem by induction on $n$. The base case has just been done. Let $k \geq 1$ and suppose we have proven the statement for $n=k$. Consider now a real number $x \geq 1$ with the property that $\left\lfloor x^{k+2}\right\rfloor,\left\lfloor x^{k+3}\right\rfloor, \ldots,\left\lfloor x^{4 k+4}\right\rfloor$ are all squares. In particular, $\left\lfloor x^{2(k+1)}\right\rfloor,\left\lfloor x^{3(k+1)}\right\rfloor$ and $\left\lfloor x^{4(k+1)}\right\rfloor$ are all squares. We can thus apply the case $n=1$ to $x^{k+1}$ (which is a real number greater than or equal to 1) and find that $\left\lfloor x^{k+1}\right\rfloor$ is also a square. Now we know that $\left\lfloor x^{k+1}\right\rfloor$, $\left\lfloor x^{k+2}\right\rfloor, \ldots,\left\lfloor x^{4 k}\right\rfloor$ are all squares and it follows from the induction hypothesis that $\lfloor x\rfloor$ is also a square. This completes the induction.
