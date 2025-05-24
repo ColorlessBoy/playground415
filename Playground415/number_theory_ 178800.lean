@@ -1,5 +1,9 @@
 import Mathlib
 
+-- 互质幂相等推公共底数
+lemma pow_eq_pow_iff_of_coprime' {a b m n : ℕ} (h1 : m.Coprime n) : a^m = b^n ↔ ∃ c, a = c^n ∧ b = c^m := by
+  sorry
+
 lemma gcd_pos_iff {m n : Nat} : 0 < Nat.gcd m n ↔ 0 < m ∨ 0 < n := by
   simp only [Nat.pos_iff_ne_zero, ne_eq, Nat.gcd_eq_zero_iff, Decidable.not_and_iff_or_not]
 
@@ -20,7 +24,7 @@ lemma lemma1 (a b : ℕ) (ha : a ≥ 1) (hb : b ≥ 1) : ∃ p, ∃ q, p ≥ 1 �
   apply Nat.gcd_dvd_left
 
 -- 互质幂相等推公共底数
-lemma lemma2 {a b p q : ℕ} (h1 : p.Coprime q) (h2 : a^p = b^q) : ∃ c, a = c^q ∧ b = c^p :=
+lemma lemma2 {a b m n : ℕ} (h1 : m.Coprime n) (h2 : a^m = b^n) : ∃ c, a = c^n ∧ b = c^m := by
   sorry
 
 lemma lemma3 {a b c m n : ℕ} (ha : a = c^m) (hb : b = c^n) : (∃ k, b^2 = k * a) ∨ (∃ k, a = k * b^2) := by
