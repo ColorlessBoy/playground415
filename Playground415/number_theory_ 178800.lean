@@ -1,37 +1,42 @@
 import Mathlib
 
--- 互质幂相等推公共底数
-lemma pow_eq_pow_iff_of_coprime' {a b m n : ℕ} (h1 : m.Coprime n) : a^m = b^n ↔ ∃ c, a = c^n ∧ b = c^m := by
-  sorry
-
+-- Lemma: gcd(m, n) > 0 if and only if m > 0 or n > 0
 lemma gcd_pos_iff {m n : Nat} : 0 < Nat.gcd m n ↔ 0 < m ∨ 0 < n := by
   simp only [Nat.pos_iff_ne_zero, ne_eq, Nat.gcd_eq_zero_iff, Decidable.not_and_iff_or_not]
 
+-- Given positive natural numbers a and b,
+-- construct coprime p and q such that p * a = q * b
 lemma lemma1 (a b : ℕ) (ha : a ≥ 1) (hb : b ≥ 1) : ∃ p, ∃ q, p ≥ 1 ∧ q ≥ 1 ∧ p.Coprime q ∧ p * a = q * b := by
-  let d := b.gcd a
-  let m := a / d
-  let n := b / d
+  let d := b.gcd a           -- Let d be the gcd of b and a
+  let m := a / d             -- Define m = a / d
+  let n := b / d             -- Define n = b / d
   use n; use m
+  -- d > 0 since b ≥ 1
   have hd : d > 0 := gcd_pos_iff.mpr (Or.inl hb)
+  -- a ≥ d and b ≥ d
   have hxd : a ≥ d := Nat.gcd_le_right _ ha
   have hyd : b ≥ d := Nat.gcd_le_left _ hb
+  -- m and n are positive
   have hm : m > 0 := Nat.div_pos hxd (Nat.gcd_pos_of_pos_left a hb)
   have hn : n > 0 := Nat.div_pos hyd (Nat.gcd_pos_of_pos_right b ha)
   refine ⟨hn, hm, ?_, ?_⟩
-  · exact Nat.coprime_div_gcd_div_gcd hd
+  · exact Nat.coprime_div_gcd_div_gcd hd    -- m and n are coprime
+  -- Show p * a = q * b
   rw [mul_comm, ← Nat.mul_div_assoc, mul_comm m, ← Nat.mul_div_assoc, mul_comm]
   apply Nat.gcd_dvd_right
   apply Nat.gcd_dvd_left
 
--- 互质幂相等推公共底数
+-- Lemma (to be proved): if a^m = b^n and gcd(m,n)=1, then a = c^n and b = c^m for some c
+-- Common trick in number theory problems involving exponentiation and coprimality
 lemma lemma2 {a b m n : ℕ} (h1 : m.Coprime n) (h2 : a^m = b^n) : ∃ c, a = c^n ∧ b = c^m := by
   sorry
 
+-- Given a = c^m and b = c^n, prove that either b^2 = k * a or a = k * b^2 for some k
 lemma lemma3 {a b c m n : ℕ} (ha : a = c^m) (hb : b = c^n) : (∃ k, b^2 = k * a) ∨ (∃ k, a = k * b^2) := by
   by_cases h : 2 * n ≤ m
-  · -- $2n \leq m$
+  · -- Case 1: 2n ≤ m ⇒ a = k * b^2
     have h2 : ∃ k, a = k * b^2 := by
-      use c ^ (m - 2 * n)
+      use c ^ (m - 2 * n)  -- Let k = c^(m - 2n)
       rw [ha, hb]
       have h3 : m - 2 * n + 2 * n = m := by
         omega
@@ -40,11 +45,11 @@ lemma lemma3 {a b c m n : ℕ} (ha : a = c^m) (hb : b = c^n) : (∃ k, b^2 = k *
         _ = c ^ (m - 2 * n) * c ^ (2 * n) := by rw [pow_add]
         _ = _ := by ring
     simp [h2]
-  · -- $\neg(2n \leq m)$, so $2n > m$
+  · -- Case 2: 2n > m ⇒ b^2 = k * a
     have h4 : 2 * n > m := by
       omega
     have h2 : ∃ k, b^2 = k * a := by
-      use c ^ (2 * n - m)
+      use c ^ (2 * n - m)  -- Let k = c^(2n - m)
       rw [hb, ha]
       have h3 : 2 * n - m + m = 2 * n := by
         omega
@@ -55,40 +60,53 @@ lemma lemma3 {a b c m n : ℕ} (ha : a = c^m) (hb : b = c^n) : (∃ k, b^2 = k *
         _ = _ := by ring
     simp [h2]
 
+-- Lemma 4: Proves that 2^n ≥ 1 + n for all natural numbers n.
 lemma lemma4 {n : ℕ} : 2 ^ n ≥ 1 + n := by
   induction' n with n ihn
-  · simp
-  rw [pow_add, pow_one, mul_two, ← add_assoc]
+  · simp  -- Base case: 2^0 = 1 ≥ 1 + 0 = 1
+  rw [pow_add, pow_one, mul_two, ← add_assoc]  -- 2^(n+1) = 2 * 2^n = 2^n + 2^n
   apply Nat.add_le_add ihn
+  -- Show that 2^n ≥ n implies 2^n ≥ 1 + n by transitivity
   apply le_trans _ ihn
   apply Nat.le_add_right
 
+-- Lemma 5: Proves that 3^n ≥ 1 + 2n for all natural numbers n.
 lemma lemma5 {n : ℕ} : 3 ^ n ≥ 1 + 2 * n := by
   induction' n with n ihn
-  · simp
+  · simp  -- Base case: 3^0 = 1 ≥ 1 + 2*0 = 1
   rw [pow_add, pow_one, mul_add, ← add_assoc, mul_one, Nat.mul_succ, add_comm]
   apply Nat.add_le_add ihn
-  omega
+  omega  -- Show that 2n + 2 ≤ 3^n using induction hypothesis
 
+-- Lemma 6: Proves that the only natural number n for which n * 4 = 2^n is n = 4.
 lemma lemma6 {n : ℕ} (h : n * 4 = 2 ^ n) : n = 4 := by
+  -- Case 1: Try small values n < 4, check directly and rule them out
   by_cases hn : n < 4
   · have hn : n ∈ Finset.range 4 := Finset.mem_range.mpr hn
-    have : n * 4 ≠ 2 ^ n := by fin_cases hn <;> simp
+    have : n * 4 ≠ 2 ^ n := by fin_cases hn <;> simp  -- Exhaust cases n = 0,1,2,3
     exfalso; omega
+
+  -- Case 2: If n = 4, then it's the solution
   by_cases hn : n = 4
   · exact hn
+
+  -- Case 3: If n > 4, then prove n * 4 < 2^n and derive contradiction
   have hn : n > 4 := by omega
-  have : ∃ m, n = m + 5 := by use n - 5; omega
+  have : ∃ m, n = m + 5 := by use n - 5; omega  -- Rewrite n as m + 5
   obtain ⟨m, hm⟩ := this
+
+  -- Inductive proof: Show (m + 5) * 4 < 2^(m + 5) for all m ≥ 0
   have (m : ℕ) : (m + 5) * 4 < 2 ^ (m + 5) := by
     induction' m with m ihm
-    · simp
+    · simp  -- Base case: 5 * 4 = 20 < 2^5 = 32
     rw [add_comm m, add_assoc, add_mul, one_mul, pow_add, pow_one, two_mul]
     apply Nat.add_lt_add _ ihm
-    · omega
+    · omega  -- Show 4*(m+1) < 2^(m+1) for inductive step
+
+  -- Apply inequality and contradiction
   have := this m
   rw [← hm] at this
-  exfalso; omega
+  exfalso; omega  -- Contradiction: assumption says n * 4 = 2^n, but this shows n * 4 < 2^n
 
 theorem number_theory_178800_mp {a b : ℕ} (ha: a ≥ 1) (hb: b ≥ 1) (hab : a ^ (b ^ 2) = b ^ a) :
   (a = 1 ∧ b = 1) ∨ (a = 16 ∧ b = 2) ∨ (a = 27 ∧ b = 3) := by
